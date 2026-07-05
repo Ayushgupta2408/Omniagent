@@ -1,6 +1,6 @@
 # Omniagent — AI Automation Agent
 
-NEXUS is a local AI agent that automates tasks on your computer by understanding plain English. You describe what you want, it figures out the steps and does it.
+Omniagent is a local AI agent that automates tasks on your computer by understanding plain English. You describe what you want, it figures out the steps and does it.
 
 It can browse the web, control desktop apps, manage files, send WhatsApp messages, and more — all without you touching a browser or writing any code.
 

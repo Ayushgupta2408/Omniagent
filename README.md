@@ -5,7 +5,7 @@ Omniagent is a local AI agent that automates tasks on your computer by understan
 It can browse the web, control desktop apps, manage files, send WhatsApp messages, and more — all without you touching a browser or writing any code.
 git push origin main
 
-<video controls src="Screen Recording 2026-07-05 113239.mp4" title="Omniagent By Ayush Kumar Gupta"></video>
+Demo - https://youtu.be/5uw8g5Ytgrw
 ---
 
 ## What it can do

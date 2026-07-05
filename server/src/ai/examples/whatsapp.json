@@ -1,0 +1,41 @@
+[
+  {
+    "category": "whatsapp_call",
+    "request": "call [contact] on WhatsApp",
+    "keywords": ["call", "whatsapp", "voice", "ring"],
+    "steps": [
+      {
+        "capability": "whatsapp_call",
+        "parameters": { "contact": "[contact]", "call_type": "voice" },
+        "safety_risk": "low",
+        "description": "Start a WhatsApp voice call"
+      }
+    ]
+  },
+  {
+    "category": "whatsapp_call",
+    "request": "open WhatsApp search for [contact] and call him",
+    "keywords": ["whatsapp", "call", "search", "open", "him", "her"],
+    "steps": [
+      {
+        "capability": "whatsapp_call",
+        "parameters": { "contact": "[contact]", "call_type": "voice" },
+        "safety_risk": "low",
+        "description": "Search and call contact on WhatsApp"
+      }
+    ]
+  },
+  {
+    "category": "whatsapp_video_call",
+    "request": "video call [contact] on WhatsApp",
+    "keywords": ["video", "call", "whatsapp", "facetime"],
+    "steps": [
+      {
+        "capability": "whatsapp_call",
+        "parameters": { "contact": "[contact]", "call_type": "video" },
+        "safety_risk": "low",
+        "description": "Start a WhatsApp video call"
+      }
+    ]
+  }
+]

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: transparent;
+    overflow: hidden;
+    font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+    -webkit-app-region: no-drag;
+    user-select: none;
+  }
+
+  #pill {
+    width: 280px;
+    background: rgba(8, 10, 14, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 10px 12px 8px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: opacity 0.4s ease;
+  }
+
+  #pill.done {
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  #label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    margin-bottom: 7px;
+    transition: color 0.3s ease;
+  }
+
+  #label span.verb {
+    color: #00d4ff;
+  }
+
+  #label.done-label span.verb {
+    color: #10b981;
+  }
+
+  #bar-track {
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  #bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #00d4ff;
+    border-radius: 2px;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.4s ease;
+    box-shadow: 0 0 6px rgba(0, 212, 255, 0.5);
+  }
+
+  #bar-fill.done {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+  }
+</style>
+</head>
+<body>
+<div id="pill">
+  <div id="label"><span class="verb">nexus</span>&nbsp;·&nbsp;ready</div>
+  <div id="bar-track">
+    <div id="bar-fill"></div>
+  </div>
+</div>
+
+<script>
+  const label   = document.getElementById('label');
+  const barFill = document.getElementById('bar-fill');
+  const pill    = document.getElementById('pill');
+
+  let total     = 0;
+  let completed = 0;
+
+  // ── Truncate helper ───────────────────────────────────────────────────────
+  function truncate(str, max) {
+    return str.length > max ? str.slice(0, max) + '…' : str;
+  }
+
+  // ── Render label: splits "verb: rest" and colors the verb ─────────────────
+  function setLabel(text, isDone) {
+    const colonIdx = text.indexOf(':');
+    if (colonIdx !== -1) {
+      const verb = text.slice(0, colonIdx);
+      const rest = truncate(text.slice(colonIdx), 34);
+      label.innerHTML = `<span class="verb">${verb}</span>${rest}`;
+    } else {
+      label.innerHTML = `<span class="verb">${truncate(text, 38)}</span>`;
+    }
+    label.className = isDone ? 'done-label' : '';
+  }
+
+  // ── Progress ──────────────────────────────────────────────────────────────
+  function setProgress(pct, done) {
+    barFill.style.width = pct + '%';
+    if (done) {
+      barFill.classList.add('done');
+      pill.classList.add('done');
+    } else {
+      barFill.classList.remove('done');
+      pill.classList.remove('done');
+    }
+  }
+
+  // ── WebSocket ─────────────────────────────────────────────────────────────
+  const WS_URL = 'ws://localhost:3001';
+
+  function connect() {
+    const ws = new WebSocket(WS_URL);
+
+    ws.onmessage = (e) => {
+      let msg;
+      try { msg = JSON.parse(e.data); } catch { return; }
+
+      switch (msg.type) {
+        case 'execution_start':
+          total     = msg.totalSteps || 0;
+          completed = 0;
+          setProgress(0, false);
+          setLabel('starting: ' + total + ' steps', false);
+          break;
+
+        case 'step_start':
+          if (msg.step && msg.step.description) {
+            // Build a short "verb: detail" string from the step
+            const cap  = (msg.step.capability || '').replace(/_/g, ' ');
+            const desc = msg.step.description || '';
+            // Use capability as verb, trim description for the rest
+            const short = cap + ': ' + truncate(desc, 26);
+            setLabel(short, false);
+          }
+          break;
+
+        case 'step_complete':
+          completed++;
+          const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+          setProgress(pct, false);
+          break;
+
+        case 'execution_complete':
+          setProgress(100, true);
+          setLabel('done: all steps complete', true);
+          break;
+
+        case 'execution_stopped':
+          setLabel('stopped', false);
+          break;
+
+        case 'execution_failed':
+          setLabel('error: step ' + (msg.stepNumber || '?'), false);
+          barFill.style.background = '#ef4444';
+          barFill.style.boxShadow  = '0 0 6px rgba(239,68,68,0.5)';
+          break;
+      }
+    };
+
+    ws.onclose = () => setTimeout(connect, 3000);
+    ws.onerror = () => ws.close();
+  }
+
+  connect();
+</script>
+</body>
+</html>

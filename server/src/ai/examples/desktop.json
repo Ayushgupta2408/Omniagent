@@ -1,0 +1,37 @@
+[
+  {
+    "category": "app_open_only",
+    "request": "open Calculator",
+    "keywords": ["open", "launch", "start", "calculator", "app", "application"],
+    "steps": [
+      { "capability": "open_application", "parameters": { "app_name": "Calculator" }, "safety_risk": "low", "description": "Launch the Calculator application" }
+    ]
+  },
+  {
+    "category": "whatsapp_send",
+    "request": "open WhatsApp and send a message",
+    "keywords": ["open", "whatsapp", "send", "message", "chat", "contact", "wa"],
+    "steps": [
+      { "capability": "whatsapp_send", "parameters": { "contact": "John", "message": "hey" }, "safety_risk": "low", "description": "Send a WhatsApp message to John" }
+    ]
+  },
+  {
+    "category": "app_wallpaper",
+    "request": "set wallpaper to a cyberpunk city",
+    "keywords": ["wallpaper", "background", "desktop", "set", "change", "image"],
+    "steps": [
+      { "capability": "set_wallpaper", "parameters": { "query": "cyberpunk city neon night 4k" }, "safety_risk": "low", "description": "Update desktop wallpaper to cyberpunk city" }
+    ]
+  },
+  {
+    "category": "app_wallpaper_with_spotify",
+    "request": "set wallpaper to Tokyo night and open Spotify and search japanese city pop",
+    "keywords": ["wallpaper", "spotify", "music", "tokyo"],
+    "steps": [
+      { "capability": "set_wallpaper", "parameters": { "query": "Tokyo night cityscape neon 4k" }, "safety_risk": "low", "description": "Change wallpaper to Tokyo night" },
+      { "capability": "browser_open", "parameters": { "url": "https://open.spotify.com/search" }, "safety_risk": "low", "description": "Open Spotify search page" },
+      { "capability": "wait", "parameters": { "seconds": 2 }, "safety_risk": "low", "description": "Wait for Spotify to load" },
+      { "capability": "browser_fill", "parameters": { "selector": "input[data-testid='search-input']", "value": "japanese city pop music" }, "safety_risk": "low", "description": "Type 'japanese city pop music' in search" }
+    ]
+  }
+]

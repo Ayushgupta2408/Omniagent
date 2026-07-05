@@ -1,0 +1,23 @@
+{
+  "name": "nexus-electron",
+  "version": "1.0.0",
+  "description": "NEXUS Desktop Wrapper",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "electron": "^28.2.4"
+  },
+  "build": {
+    "appId": "com.nexus.agent",
+    "productName": "NEXUS Agent",
+    "directories": {
+      "output": "../dist"
+    },
+    "win": { "target": "nsis" },
+    "mac": { "target": "dmg" },
+    "linux": { "target": "AppImage" }
+  }
+}

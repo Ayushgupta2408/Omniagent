@@ -1,0 +1,30 @@
+[
+  {
+    "category": "file_vscode",
+    "request": "create a Python hello world file on the desktop and open it in VSCode",
+    "keywords": ["vscode", "code", "python", "file", "create", "editor", "script"],
+    "steps": [
+      { "capability": "create_file", "parameters": { "path": "Desktop/hello.py", "content": "print('Hello, World!')\n" }, "safety_risk": "low", "description": "Create hello.py script on Desktop" },
+      { "capability": "run_shell_command", "parameters": { "command": "code ~/Desktop/hello.py" }, "safety_risk": "low", "description": "Open hello.py in VS Code" }
+    ]
+  },
+  {
+    "category": "file_scraper",
+    "request": "create a Python web scraper file on desktop open it in VSCode then search GitHub for similar projects",
+    "keywords": ["scraper", "python", "github", "vscode", "web", "crawl"],
+    "steps": [
+      { "capability": "create_file", "parameters": { "path": "Desktop/web_scraper.py", "content": "import requests\nfrom bs4 import BeautifulSoup\n\ndef scrape(url):\n    headers = {'User-Agent': 'Mozilla/5.0'}\n    resp = requests.get(url, headers=headers)\n    soup = BeautifulSoup(resp.text, 'html.parser')\n    links = [a.get('href') for a in soup.find_all('a', href=True)]\n    headings = [h.text.strip() for h in soup.find_all(['h1','h2','h3'])]\n    return {'links': links, 'headings': headings}\n\nif __name__ == '__main__':\n    url = input('Enter URL: ')\n    result = scrape(url)\n    print(f'Links: {len(result[\"links\"])}, Headings: {len(result[\"headings\"])}')\n" }, "safety_risk": "low", "description": "Generate a Python web scraper script" },
+      { "capability": "run_shell_command", "parameters": { "command": "code ~/Desktop/web_scraper.py" }, "safety_risk": "low", "description": "Open the scraper script in VS Code" },
+      { "capability": "browser_open", "parameters": { "url": "https://github.com/search?q=python+web+scraper&type=repositories&s=stars&o=desc" }, "safety_risk": "low", "description": "Search GitHub for web scraper repositories" }
+    ]
+  },
+  {
+    "category": "file_notepad",
+    "request": "open Notepad with a motivational quote",
+    "keywords": ["notepad", "text", "write", "note", "open", "type"],
+    "steps": [
+      { "capability": "create_file", "parameters": { "path": "Desktop/note.txt", "content": "The best time to start was yesterday. The second best time is now." }, "safety_risk": "low", "description": "Create a note with a motivational quote" },
+      { "capability": "run_shell_command", "parameters": { "command": "notepad ~/Desktop/note.txt" }, "safety_risk": "low", "description": "Open the note in Notepad" }
+    ]
+  }
+]

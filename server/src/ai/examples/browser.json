@@ -1,0 +1,126 @@
+[
+  {
+    "category": "browser_search",
+    "request": "search for the latest AI news and open top 3 articles and create a Word document",
+    "keywords": ["search", "news", "articles", "document", "report", "summarize", "research"],
+    "steps": [
+      { "capability": "browser_open", "parameters": { "url": "https://www.bing.com/search?q=latest+AI+news+2025" }, "safety_risk": "low", "description": "Search for latest AI news on Bing" },
+      { "capability": "browser_extract_results", "parameters": { "variable_name": "results", "count": 5 }, "safety_risk": "low", "description": "Extract top search results" },
+      { "capability": "browser_open", "parameters": { "url": "{{results_0_url}}" }, "safety_risk": "low", "description": "Open the first article" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "article1", "topic": "AI news" }, "safety_risk": "low", "description": "Read and summarize the first article" },
+      { "capability": "browser_open", "parameters": { "url": "{{results_1_url}}" }, "safety_risk": "low", "description": "Open the second article" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "article2", "topic": "AI news" }, "safety_risk": "low", "description": "Read and summarize the second article" },
+      { "capability": "browser_open", "parameters": { "url": "{{results_2_url}}" }, "safety_risk": "low", "description": "Open the third article" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "article3", "topic": "AI news" }, "safety_risk": "low", "description": "Read and summarize the third article" },
+      { "capability": "create_file", "parameters": { "path": "Desktop/Summary.txt", "content": "Summary\n\nARTICLE 1\n{{article1}}\n\nARTICLE 2\n{{article2}}\n\nARTICLE 3\n{{article3}}" }, "safety_risk": "low", "description": "Create a summary document on Desktop" },
+      { "capability": "run_shell_command", "parameters": { "command": "notepad ~/Desktop/Summary.txt" }, "safety_risk": "low", "description": "Open the summary document in Notepad" }
+    ]
+  },
+  {
+    "category": "browser_search_excel",
+    "request": "search for the latest Iran and Israel war and make an Excel sheet",
+    "keywords": ["search", "excel", "xlsx", "spreadsheet", "sheet", "war", "news", "latest", "topic", "results", "make", "create"],
+    "steps": [
+      { "capability": "browser_open", "parameters": { "url": "https://www.bing.com/search?q=latest+Iran+Israel+war+news" }, "safety_risk": "low", "description": "Search for Iran-Israel war news on Bing" },
+      { "capability": "browser_extract_results", "parameters": { "variable_name": "results", "count": 5 }, "safety_risk": "low", "description": "Extract news article links" },
+      { "capability": "browser_open", "parameters": { "url": "{{results_0_url}}" }, "safety_risk": "low", "description": "Navigate to the first news source" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "article1", "topic": "Iran Israel war" }, "safety_risk": "low", "description": "Analyze the first article" },
+      { "capability": "browser_open", "parameters": { "url": "{{results_1_url}}" }, "safety_risk": "low", "description": "Navigate to the second news source" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "article2", "topic": "Iran Israel war" }, "safety_risk": "low", "description": "Analyze the second article" },
+      { "capability": "browser_open", "parameters": { "url": "{{results_2_url}}" }, "safety_risk": "low", "description": "Navigate to the third news source" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "article3", "topic": "Iran Israel war" }, "safety_risk": "low", "description": "Analyze the third article" },
+      {
+        "capability": "create_file",
+        "parameters": {
+          "path": "Desktop/make_excel.py",
+          "content": "import subprocess, sys, os\ntry:\n ── Auto-install openpyxl if missing ──────────────────────────────────────────\ntry:\n    import openpyxl\nexcept ImportError:\n    subprocess.check_call([sys.executable,'-m','pip','install','openpyxl','--quiet'])\n    import openpyxl\nfrom openpyxl.styles import Font, PatternFill, Alignment\n\n\ndef parse_article(raw):\n    \"\"\"\n    Splits the article blob that browserReadPage produces into (title, url, summary).\n\n    browserReadPage always stores data in articleStore as a flat string:\n        Title: <title>\\nURL: <url>\\n\\n<summary>\n\n    IMPORTANT — the \\\\n you see in the injected value is intentional.\n    On Windows, paths with spaces in the username (e.g. 'C:\\\\Users\\\\garv thakre')\n    require the entire string to stay on ONE logical line inside the Python source.\n    createFile escapes real newlines to \\\\n so the Python file is syntactically\n    valid. openpyxl receives the final string and writes it to the cell correctly.\n\n    This function handles BOTH cases:\n      - real newlines  (if running on mac/linux or future fix)\n      - literal \\\\n    (current Windows behaviour — the common case)\n\n    It is intentionally generic so it works for any task: jobs, news,\n    apartments, products — anything browserReadPage returns.\n    \"\"\"\n    import re\n    # Normalise: treat literal \\n (two chars) the same as a real newline\n    text = raw.replace('\\\\n', '\\n')\n\n    title   = ''\n    url     = ''\n    summary = ''\n\n    m_title = re.search(r'Title:\\s*(.+?)(?:\\n|$)', text)\n    m_url   = re.search(r'URL:\\s*(https?://\\S+)', text)\n    if m_title:\n        title = m_title.group(1).strip()\n    if m_url:\n        url = m_url.group(1).strip()\n\n    # Everything after the first blank line is the summary\n    parts = text.split('\\n\\n', 1)\n    if len(parts) > 1:\n        summary = parts[1].strip()\n    else:\n        # Fallback: strip known prefixes and use what remains\n        summary = text\n        if title:\n            summary = summary.replace(f'Title: {title}', '')\n        if url:\n            summary = summary.replace(f'URL: {url}', '')\n        summary = summary.strip()\n\n    return title, url, summary\n\n\n# ── Build workbook ────────────────────────────────────────────────────────────\nwb = openpyxl.Workbook()\nws = wb.active\nws.title = 'Results'\n\nheaders = ['#', 'Title', 'URL', 'Summary']\nws.append(headers)\nfor cell in ws[1]:\n    cell.font      = Font(bold=True, color='FFFFFF')\n    cell.fill      = PatternFill('solid', fgColor='1F4E79')\n    cell.alignment = Alignment(horizontal='center', vertical='center')\nws.row_dimensions[1].height = 22\n\n# ── Data rows — uses split keys populated by browserReadPage automatically ───\n# browserReadPage now stores article1_title, article1_url, article1_summary\n# in addition to the full article1 blob, so we can use them directly.\n# Falls back to parse_article() on the full blob for backward compatibility.\narticles = [\n    (1, '{{article1_title}}', '{{article1_url}}', '{{article1_summary}}'),\n    (2, '{{article2_title}}', '{{article2_url}}', '{{article2_summary}}'),\n    (3, '{{article3_title}}', '{{article3_url}}', '{{article3_summary}}'),\n]\n\nfor num, title, url, summary in articles:\n    # If the split keys were not resolved (empty or still a template string),\n    # fall back to parsing the full article blob — handles any task generically.\n    if not title or title.startswith('{{'):\n        raw_blob = locals().get(f'article{num}', '')\n        title, url, summary = parse_article(raw_blob)\n\n    ws.append([num, title, url, summary])\n    row = ws.max_row\n    # Set row height tall enough to show wrapped content\n    ws.row_dimensions[row].height = 80\n    for col in range(1, 5):\n        ws.cell(row=row, column=col).alignment = Alignment(\n            wrap_text=True, vertical='top'\n        )\n\n# ── Column widths ─────────────────────────────────────────────────────────────\nws.column_dimensions['A'].width = 4\nws.column_dimensions['B'].width = 40\nws.column_dimensions['C'].width = 45\nws.column_dimensions['D'].width = 80\n\n# ── Save and open ─────────────────────────────────────────────────────────────\npath = os.path.expanduser('~/Desktop/Results.xlsx')\nwb.save(path)\nprint('Saved:', path)\nif sys.platform == 'win32':\n    os.startfile(path)\nelif sys.platform == 'darwin':\n    subprocess.run(['open', path])\n"
+        },
+        "safety_risk": "low",
+        "description": "Generate a Python script to create an Excel report"
+      },
+      { "capability": "run_shell_command", "parameters": { "command": "python ~/Desktop/make_excel.py" }, "safety_risk": "low", "description": "Execute the Excel generation script" }
+    ]
+  },
+  {
+    "category": "browser_youtube",
+    "request": "search YouTube for lofi hip hop and play the first video",
+    "keywords": ["youtube", "video", "play", "watch", "music", "search"],
+    "steps": [
+      { "capability": "browser_open", "parameters": { "url": "https://www.youtube.com/results?search_query=lofi+hip+hop" }, "safety_risk": "low", "description": "Search for lofi hip hop on YouTube" },
+      { "capability": "browser_click", "parameters": { "selector": "ytd-video-renderer a#video-title" }, "safety_risk": "low", "description": "Click on the first video result" }
+    ]
+  },
+  {
+    "category": "whatsapp_send_message",
+    "request": "open WhatsApp Web search for John and send a message hey",
+    "keywords": ["whatsapp", "message", "send", "chat", "contact", "wa"],
+    "steps": [
+      {
+        "capability": "whatsapp_send",
+        "parameters": { "contact": "John", "message": "hey" },
+        "safety_risk": "low",
+        "description": "Send a WhatsApp message to John"
+      }
+    ]
+  },
+  {
+    "category": "browser_amazon",
+    "request": "find wireless headphones under 2000 rupees on Amazon India",
+    "keywords": ["amazon", "buy", "product", "shop", "price", "rupees", "under"],
+    "steps": [
+      { "capability": "browser_open", "parameters": { "url": "https://www.amazon.in/s?k=wireless+headphones&rh=p_36%3A-200000&s=review-rank" }, "safety_risk": "low", "description": "Search for headphones under ₹2000 on Amazon" },
+      { "capability": "browser_extract_results", "parameters": { "variable_name": "products", "count": 5 }, "safety_risk": "low", "description": "Extract product details and links" },
+      { "capability": "browser_open", "parameters": { "url": "{{products_0_url}}" }, "safety_risk": "low", "description": "Open the top-rated product" }
+    ]
+  },
+  {
+    "category": "browser_spotify",
+    "request": "open Spotify and search for jazz music",
+    "keywords": ["spotify", "music", "song", "playlist", "artist", "album"],
+    "steps": [
+      { "capability": "browser_open", "parameters": { "url": "https://open.spotify.com/search" }, "safety_risk": "low", "description": "Open Spotify Search" },
+      { "capability": "wait", "parameters": { "seconds": 2 }, "safety_risk": "low", "description": "Wait for search page to load" },
+      { "capability": "browser_fill", "parameters": { "selector": "input[data-testid='search-input']", "value": "jazz music" }, "safety_risk": "low", "description": "Enter search query for 'jazz music'" }
+    ]
+  },
+  {
+    "category": "browser_linkedin_jobs",
+    "request": "search LinkedIn for Python developer jobs in Bangalore and save results",
+    "keywords": ["linkedin", "jobs", "career", "hiring", "work", "position", "developer"],
+    "steps": [
+      {
+        "capability": "browser_open",
+        "parameters": { "url": "https://www.linkedin.com/jobs/search?keywords=Python+Developer&location=Bangalore" },
+        "safety_risk": "low",
+        "description": "Search for Python Developer jobs in Bangalore on LinkedIn"
+      },
+      {
+        "capability": "browser_extract_results",
+        "parameters": { "variable_name": "jobs", "count": 5 },
+        "safety_risk": "low",
+        "description": "Extract job posting details"
+      },
+      { "capability": "browser_open", "parameters": { "url": "{{jobs_0_url}}" }, "safety_risk": "low", "description": "View the first job posting" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "job1", "topic": "Python developer job" }, "safety_risk": "low", "description": "Extract details from the first job posting" },
+      { "capability": "browser_open", "parameters": { "url": "{{jobs_1_url}}" }, "safety_risk": "low", "description": "View the second job posting" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "job2", "topic": "Python developer job" }, "safety_risk": "low", "description": "Extract details from the second job posting" },
+      { "capability": "browser_open", "parameters": { "url": "{{jobs_2_url}}" }, "safety_risk": "low", "description": "View the third job posting" },
+      { "capability": "browser_read_page", "parameters": { "variable_name": "job3", "topic": "Python developer job" }, "safety_risk": "low", "description": "Extract details from the third job posting" },
+      {
+        "capability": "create_file",
+        "parameters": {
+          "path": "Desktop/make_excel.py",
+          "content": "import subprocess, sys, os, re\ntry:\n    import openpyxl\nexcept ImportError:\n    subprocess.check_call([sys.executable,'-m','pip','install','openpyxl','--quiet'])\n    import openpyxl\nfrom openpyxl.styles import Font, PatternFill, Alignment\n\n\ndef parse_article(raw):\n    \"\"\"\n    Generic parser — works for any browserReadPage output (jobs, news, etc.).\n    See browser_search_excel example for full explanation of \\\\n handling.\n    \"\"\"\n    text = raw.replace('\\\\n', '\\n')\n    title, url, summary = '', '', ''\n    m_title = re.search(r'Title:\\s*(.+?)(?:\\n|$)', text)\n    m_url   = re.search(r'URL:\\s*(https?://\\S+)', text)\n    if m_title: title = m_title.group(1).strip()\n    if m_url:   url   = m_url.group(1).strip()\n    parts = text.split('\\n\\n', 1)\n    summary = parts[1].strip() if len(parts) > 1 else text.replace(f'Title: {title}', '').replace(f'URL: {url}', '').strip()\n    return title, url, summary\n\n\nwb = openpyxl.Workbook()\nws = wb.active\nws.title = 'Jobs'\n\nheaders = ['#', 'Job Title', 'URL', 'Details']\nws.append(headers)\nfor cell in ws[1]:\n    cell.font      = Font(bold=True, color='FFFFFF')\n    cell.fill      = PatternFill('solid', fgColor='1F4E79')\n    cell.alignment = Alignment(horizontal='center', vertical='center')\nws.row_dimensions[1].height = 22\n\njobs = [\n    (1, '{{job1_title}}', '{{job1_url}}', '{{job1_summary}}'),\n    (2, '{{job2_title}}', '{{job2_url}}', '{{job2_summary}}'),\n    (3, '{{job3_title}}', '{{job3_url}}', '{{job3_summary}}'),\n]\n\nfor num, title, url, details in jobs:\n    if not title or title.startswith('{{'):\n        raw_blob = locals().get(f'job{num}', '')\n        title, url, details = parse_article(raw_blob)\n    ws.append([num, title, url, details])\n    row = ws.max_row\n    ws.row_dimensions[row].height = 80\n    for col in range(1, 5):\n        ws.cell(row=row, column=col).alignment = Alignment(wrap_text=True, vertical='top')\n\nws.column_dimensions['A'].width = 4\nws.column_dimensions['B'].width = 40\nws.column_dimensions['C'].width = 50\nws.column_dimensions['D'].width = 80\n\npath = os.path.expanduser('~/Desktop/LinkedInJobs.xlsx')\nwb.save(path)\nprint('Saved:', path)\nif sys.platform == 'win32':\n    os.startfile(path)\n"
+        },
+        "safety_risk": "low",
+        "description": "Create a script to generate a job report Excel file"
+      },
+      {
+        "capability": "run_shell_command",
+        "parameters": { "command": "python ~/Desktop/make_excel.py" },
+        "safety_risk": "low",
+        "description": "Run the Excel report generator"
+      }
+    ]
+  }
+]

@@ -3,9 +3,9 @@
 Omniagent is a local AI agent that automates tasks on your computer by understanding plain English. You describe what you want, it figures out the steps and does it.
 
 It can browse the web, control desktop apps, manage files, send WhatsApp messages, and more — all without you touching a browser or writing any code.
+git push origin main
 
-
-
+<video controls src="Screen Recording 2026-07-05 113239.mp4" title="Omniagent By Ayush Kumar Gupta"></video>
 ---
 
 ## What it can do
@@ -33,9 +33,9 @@ Find Python developer jobs in Bangalore on LinkedIn and save to Excel
 
 ## How it works
 
-You type a task → an AI (Groq by default, free) converts it into a step-by-step plan → a safety reviewer checks the plan → you approve → NEXUS executes each step and shows you live progress.
+You type a task → an AI (Groq by default, free) converts it into a step-by-step plan → a safety reviewer checks the plan → you approve → Omniagent executes each step and shows you live progress.
 
-If a step fails mid-execution, NEXUS automatically replans from the current state and tries a different approach instead of giving up.
+If a step fails mid-execution, Omniagent automatically replans from the current state and tries a different approach instead of giving up.
 
 ---
 
@@ -51,8 +51,8 @@ If a step fails mid-execution, NEXUS automatically replans from the current stat
 
 **1. Clone the repo**
 ```bash
-git clone https://github.com/yourusername/nexus.git
-cd nexus
+git clone https://github.com/yourusername/Omniagent.git
+cd Omniagent
 ```
 
 **2. Install dependencies**
@@ -90,7 +90,7 @@ cd server && npm run auth
 
 ---
 
-## Running NEXUS
+## Running Omniagent
 
 Open two terminals:
 
@@ -113,7 +113,7 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project structure
 
 ```
-nexus/
+Omniagent/
 ├── server/                  # Node.js + TypeScript backend
 │   ├── src/
 │   │   ├── ai/
@@ -146,7 +146,7 @@ nexus/
 
 ## Switching AI providers
 
-NEXUS works with Groq (free), Anthropic, or OpenAI. Change the provider in your `.env`:
+Omniagent works with Groq (free), Anthropic, or OpenAI. Change the provider in your `.env`:
 
 ```bash
 # Groq (free, recommended)
@@ -167,7 +167,7 @@ OPENAI_API_KEY=your_key_here
 
 ## Memory
 
-After each task, NEXUS saves a one-line summary to `~/nexus-logs/MEMORY.md`. On the next task, it reads this file so it knows your history and preferences. You can open and edit this file anytime — it's just plain Markdown.
+After each task, Omniagent saves a one-line summary to `~/nexus-logs/MEMORY.md`. On the next task, it reads this file so it knows your history and preferences. You can open and edit this file anytime — it's just plain Markdown.
 
 ---
 

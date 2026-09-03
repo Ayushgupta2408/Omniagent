@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, KeyboardEvent } from 'react'
+import VoiceInput from '@/components/VoiceInput'
 
 const EXAMPLES = [
   "Open Chrome and search for the latest AI news",
@@ -18,11 +19,26 @@ interface PromptInputProps {
 export default function PromptInput({ onSubmit, loading }: PromptInputProps) {
   const [prompt, setPrompt]   = useState('')
   const [focused, setFocused] = useState(false)
+  const [voiceActive, setVoiceActive] = useState(false)
   const ref = useRef<HTMLTextAreaElement>(null)
 
   const submit = () => { if (prompt.trim() && !loading) onSubmit(prompt.trim()) }
   const onKey  = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submit() }
+  }
+
+  // Live-update the textarea as speech comes in ("Voice Assistant" command entry).
+  const handleVoiceTranscript = (text: string) => {
+    setVoiceActive(true)
+    setPrompt(text)
+  }
+
+  // Phrase finished — leave the transcribed text in the box for the user
+  // to review/edit, then focus so Cmd/Ctrl+Enter or the button still works.
+  const handleVoiceFinal = (text: string) => {
+    setVoiceActive(false)
+    setPrompt(text)
+    ref.current?.focus()
   }
 
   return (
@@ -37,18 +53,29 @@ export default function PromptInput({ onSubmit, loading }: PromptInputProps) {
           onKeyDown={onKey}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          placeholder="Describe what you want to automate..."
+          placeholder="Describe what you want to automate, or use the mic..."
           disabled={loading}
           rows={3}
-          className={`w-full bg-black rounded-lg px-4 py-3
+          className={`w-full bg-black rounded-lg pl-4 pr-14 py-3
             text-ntext font-sans text-[14px] leading-relaxed resize-none outline-none
             transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
             placeholder:text-dim border
-            ${focused
-              ? 'border-cyan shadow-[0_0_0_2px_rgba(0,102,204,0.1)]'
-              : 'border-border'
+            ${voiceActive
+              ? 'border-red shadow-[0_0_0_2px_rgba(255,61,90,0.12)]'
+              : focused
+                ? 'border-cyan shadow-[0_0_0_2px_rgba(0,102,204,0.1)]'
+                : 'border-border'
             }`}
         />
+
+        {/* Voice command mic — top-right corner of the textarea */}
+        <div className="absolute top-2.5 right-2.5">
+          <VoiceInput
+            onTranscript={handleVoiceTranscript}
+            onFinalTranscript={handleVoiceFinal}
+            disabled={loading}
+          />
+        </div>
       </div>
 
       {/* Submit */}

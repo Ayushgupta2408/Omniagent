@@ -6,6 +6,7 @@ It can browse the web, control desktop apps, manage files, send WhatsApp message
 git push origin main
 
 
+Demo - https://youtu.be/5uw8g5Ytgrw
 ---
 
 ## What it can do
@@ -203,3 +204,28 @@ Execution logs are saved to `~/nexus-logs/`:
 ## License
 
 MIT
+---
+
+<div align="center">
+
+## 💙 Thank You for Visiting!
+
+If you found this project useful...
+
+# ⭐ Please consider giving it a Star ⭐
+
+It inspires me to create more open-source AI projects.
+
+<br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&pause=1000&color=36BCF7&center=true&vCenter=true&width=650&lines=Built+with+Passion.;Powered+by+Innovation.;Created+by+Ayush+Kumar+Gupta."/>
+
+<br>
+
+### 🚀 Built with ❤️ by **Ayush Kumar Gupta**
+
+<a href="https://github.com/Ayushgupta2408">
+<img src="https://img.shields.io/badge/GitHub-Ayushgupta2408-black?style=for-the-badge&logo=github"/>
+</a>
+
+</div>
